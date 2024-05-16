@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2><a href="{% url 'index' %}">Bosh sahifa</a></h2>
+<h2>Savatcha</h2>
+<h1>Savatchadagi mahsulotlar</h1>
+<h3>Umumiy soni: {{ cart_total_quantity }} Umumiy narxi: {{cart_total_price}}</h3>
+<ul>
+    {% for product in order_products %}
+    <hr>
+    <li><h3>Nomi: {{ product.product.name }}</h3></li>
+    <li>Narxi: {{ product.product.price }} $</li>
+    <li>Miqdori: {{ product.quantity }}</li>
+    <li>
+        <a href="{% url 'to_cart' product.pk 'delete' %}">Del</a>
+        {{ product.quantity }}
+        <a href="{% url 'to_cart' product.pk 'add' %}">Add</a>
+    </li>
+    <li>Umumiy narxi: {{product.get_total_price}}</li>
+    {% endfor %}
+</ul>
+</body>
+</html>

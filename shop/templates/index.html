@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>Bosh sahifa</h2>
+<h2><a href="{% url 'cart' %}">Savatcha</a></h2>
+<h1>Barcha mahsulotlar</h1>
+<ul>
+    {% for product in products %}
+    <hr>
+    <li><h3>Nomi: {{ product.name }}</h3></li>
+    <li>Narxi: {{ product.price }} $</li>
+    <li>Miqdori: {{ product.quantity }}</li>
+    <li><a href="{% url 'to_cart' product.pk 'add' %}"><h3>Savatga qo'shish</h3></a></li>
+    {% endfor %}
+</ul>
+</body>
+</html>
