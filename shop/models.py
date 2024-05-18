@@ -1,8 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 
-# Create your models here.
 class Product(models.Model):
     name = models.CharField(max_length=150)
     price = models.FloatField()
@@ -11,11 +11,20 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    def clean(self):
+        if self.price < 0:
+            raise ValidationError('Price cannot be negative')
+        if self.quantity < 0:
+            raise ValidationError('Quantity cannot be negative')
+
 
 class Customer(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     first_name = models.CharField(max_length=50, null=True, blank=True)
     last_name = models.CharField(max_length=50, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
 
 
 class Order(models.Model):
@@ -26,13 +35,13 @@ class Order(models.Model):
     @property
     def get_cart_total_price(self):
         order_products = self.orderproduct_set.all()
-        total_price = [product.get_total_price for product in order_products]
-        return sum(total_price)
+        total_price = sum(product.get_total_price for product in order_products if product.product is not None)
+        return total_price
 
     @property
     def get_cart_total_quantity(self):
         order_products = self.orderproduct_set.all()
-        total_quantity = len(order_products)
+        total_quantity = sum(product.quantity for product in order_products if product.product is not None)
         return total_quantity
 
 
@@ -44,8 +53,14 @@ class OrderProduct(models.Model):
 
     @property
     def get_total_price(self):
-        total_price = self.quantity * self.product.price
-        return total_price
+        if self.product is not None:
+            total_price = self.quantity * self.product.price
+            return total_price
+        return 0
+
+    def clean(self):
+        if self.quantity < 0:
+            raise ValidationError('Quantity cannot be negative')
 
 
 class ShippingAddress(models.Model):
@@ -69,3 +84,6 @@ class Region(models.Model):
 class City(models.Model):
     region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=150)
+
+    def __str__(self):
+        return self.name

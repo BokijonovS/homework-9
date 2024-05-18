@@ -16,9 +16,9 @@
     <li>Narxi: {{ product.product.price }} $</li>
     <li>Miqdori: {{ product.quantity }}</li>
     <li>
-        <a href="{% url 'to_cart' product.pk 'delete' %}">Del</a>
+        <a href="{% url 'to_cart' product.pk 'delete' %}">-</a>
         {{ product.quantity }}
-        <a href="{% url 'to_cart' product.pk 'add' %}">Add</a>
+        <a href="{% url 'to_cart' product.pk 'add' %}">+</a>
     </li>
     <li>Umumiy narxi: {{product.get_total_price}}</li>
     {% endfor %}
